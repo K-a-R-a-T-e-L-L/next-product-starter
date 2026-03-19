@@ -2,33 +2,29 @@
 import { hasLocale } from "next-intl";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+
 import { routing } from "./routing";
 
 const namespaces = [
-  "Header",
-  "HomePage",
-  "TemplatesPage",
-  "OffersPage",
-  "ProfilePage",
-  "Footer",
-  "Common",
-  "Breadcrumbs",
+  "common",
+  "nav",
+  "home",
+  "about",
+  "docs",
+  "faq",
+  "privacy",
+  "terms",
+  "sitemap",
+  "footer",
 ] as const;
 
-const namespaceToFile: Record<(typeof namespaces)[number], string> = {
-  Header: "header.json",
-  HomePage: "home-page.json",
-  TemplatesPage: "templates-page.json",
-  OffersPage: "offers-page.json",
-  ProfilePage: "profile-page.json",
-  Footer: "footer.json",
-  Common: "common.json",
-  Breadcrumbs: "breadcrumbs.json",
-};
+const parseJson = (raw: string) => JSON.parse(raw.replace(/^\uFEFF/, ""));
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
-  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
+  const locale = hasLocale(routing.locales, requested)
+    ? requested
+    : routing.defaultLocale;
 
   const messagesEntries = await Promise.all(
     namespaces.map(async (namespace) => {
@@ -37,11 +33,11 @@ export default getRequestConfig(async ({ requestLocale }) => {
         "public",
         "locales",
         locale,
-        namespaceToFile[namespace]
+        `${namespace}.json`,
       );
       const fileContent = await readFile(filePath, "utf8");
-      return [namespace, JSON.parse(fileContent)] as const;
-    })
+      return [namespace, parseJson(fileContent)] as const;
+    }),
   );
 
   return {

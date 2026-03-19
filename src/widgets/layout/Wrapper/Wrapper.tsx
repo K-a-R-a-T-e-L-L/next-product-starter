@@ -1,16 +1,10 @@
-import { AppShell } from "@mantine/core";
-import { ReactNode } from "react";
+﻿import { AppShell } from "@mantine/core";
+import type { ReactNode } from "react";
 
-const Wrapper = ({ children }: { children: ReactNode }) => {
+export default function Wrapper({ children }: { children: ReactNode }) {
   return (
-    <AppShell
-      w="100%"
-      bg="transparent"
-      header={{ height: 80 }}
-    >
+    <AppShell w="100%" bg="transparent" header={{ height: 72 }}>
       {children}
     </AppShell>
   );
-};
-
-export default Wrapper;
+}

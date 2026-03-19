@@ -1,16 +1,10 @@
-import type { MetadataRoute } from "next";
-import { routing, type Locale } from "@/shared/lib/i18n/routing";
-import { buildLocalizedManifest } from "@/shared/lib/seo/manifest";
+﻿import type { MetadataRoute } from "next";
 
-type LocaleManifestProps = {
-  params: Promise<{ locale: string }>;
-};
-
-export default async function manifest({ params }: LocaleManifestProps): Promise<MetadataRoute.Manifest> {
-  const { locale } = await params;
-  const normalizedLocale: Locale = routing.locales.includes(locale as Locale)
-    ? (locale as Locale)
-    : routing.defaultLocale;
-
-  return buildLocalizedManifest(normalizedLocale);
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Next App Template",
+    short_name: "Template",
+    start_url: "/",
+    display: "standalone",
+  };
 }

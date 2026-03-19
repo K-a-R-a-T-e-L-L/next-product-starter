@@ -1,24 +1,25 @@
-import { RequestCredentials } from "@kubb/plugin-client/clients/fetch";
-import { API_BASE_URL } from "@/shared/lib/api/base-url";
+﻿export type HttpMethod =
+  | "post"
+  | "put"
+  | "patch"
+  | "delete"
+  | "get"
+  | "POST"
+  | "PUT"
+  | "PATCH"
+  | "DELETE"
+  | "GET";
 
 export type RequestConfig<TData = unknown> = {
   baseURL?: string;
   url?: string;
-  method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE" | "OPTIONS";
-  params?: unknown;
+  method: HttpMethod;
+  params?: Record<string, unknown>;
   data?: TData | FormData;
-  responseType?:
-    | "arraybuffer"
-    | "blob"
-    | "document"
-    | "json"
-    | "text"
-    | "stream";
+  responseType?: "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
   signal?: AbortSignal;
-  headers?: [string, string][] | Record<string, string>;
+  headers?: HeadersInit;
   credentials?: RequestCredentials;
-  config?: { headers?: Record<string, string> };
-  [key: string]: unknown;
 };
 
 export type ResponseConfig<TData = unknown> = {
@@ -34,108 +35,48 @@ export type ResponseErrorConfig<TError = unknown> = {
   headers: Headers;
 };
 
-export type Client = <TData, TError = unknown, TVariables = unknown>(
-  config: RequestConfig<TVariables>
-) => Promise<ResponseConfig<TData>>;
+export type Client = <TData = unknown, TError = unknown, TVariables = unknown>(
+  config: RequestConfig<TVariables>,
+) => Promise<ResponseConfig<TData> & { __errorType?: TError }>;
 
-export const client = async <TData, TError = unknown, TVariables = unknown>(
-  config: RequestConfig<TVariables>
-): Promise<ResponseConfig<TData>> => {
-  const headers = new Headers(config.headers || {});
+export default async function client<TData = unknown, TError = unknown, TVariables = unknown>(
+  config: RequestConfig<TVariables>,
+): Promise<ResponseConfig<TData> & { __errorType?: TError }> {
+  const baseURL = config.baseURL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+  const rawUrl = config.url ?? "";
+  const url = new URL(rawUrl, baseURL.endsWith("/") ? baseURL : `${baseURL}/`);
 
-  if (config.config?.headers) {
-    Object.entries(config.config.headers).forEach(([key, value]) => {
-      headers.set(key, value);
+  if (config.params) {
+    Object.entries(config.params).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      url.searchParams.append(key, String(value));
     });
   }
 
-  if (
-    config.data &&
-    !(config.data instanceof FormData) &&
-    !headers.has("Content-Type")
-  ) {
-    headers.set("Content-Type", "application/json");
-  }
+  const headers = new Headers(config.headers ?? {});
 
-  const baseURL =
-    config.baseURL?.trim() || process.env.NEXT_PUBLIC_API_URL || API_BASE_URL;
+  let body: BodyInit | undefined;
 
-  const qs = new URLSearchParams();
-  if (config.params && typeof config.params === "object") {
-    Object.entries(config.params as Record<string, unknown>).forEach(
-      ([key, value]) => {
-        if (value !== undefined && value !== null) {
-          qs.append(key, String(value));
-        }
-      }
-    );
-  }
-
-  const reservedConfigKeys = new Set([
-    "baseURL",
-    "url",
-    "method",
-    "params",
-    "data",
-    "responseType",
-    "signal",
-    "headers",
-    "credentials",
-    "config",
-  ]);
-  Object.entries(config as Record<string, unknown>).forEach(([key, value]) => {
-    if (reservedConfigKeys.has(key)) {
-      return;
+  if (config.data instanceof FormData) {
+    body = config.data;
+  } else if (config.data !== undefined && config.data !== null) {
+    body = JSON.stringify(config.data);
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
     }
-
-    if (value !== undefined && value !== null) {
-      qs.append(key, String(value));
-    }
-  });
-
-  const path = (config.url || "").replace(/^\/+/, "/");
-  const normalizedBaseUrl = baseURL.replace(/\/+$/, "");
-  let targetUrl = `${normalizedBaseUrl}${path}`;
-  const query = qs.toString();
-  if (query) {
-    targetUrl += `?${query}`;
   }
 
-  const body =
-    config.data instanceof FormData
-      ? config.data
-      : config.data
-        ? JSON.stringify(config.data)
-        : undefined;
-
-  const init: RequestInit = {
+  const response = await fetch(url.toString(), {
     method: config.method.toUpperCase(),
     body,
     signal: config.signal,
     headers,
-  };
-
-  init.credentials = config.credentials ?? "include";
-
-  let response: Response;
-  try {
-    response = await fetch(targetUrl, init);
-  } catch (error) {
-    const isAbortError =
-      (config.signal && config.signal.aborted) ||
-      (typeof DOMException !== "undefined" &&
-        error instanceof DOMException &&
-        error.name === "AbortError");
-
-    if (isAbortError) {
-      throw error;
-    }
-
-    throw new TypeError("Failed to fetch");
-  }
+    credentials: config.credentials ?? "include",
+  });
 
   const text = await response.text();
   let data: unknown = null;
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -143,13 +84,12 @@ export const client = async <TData, TError = unknown, TVariables = unknown>(
   }
 
   if (!response.ok) {
-    const error: ResponseErrorConfig<TError> = {
-      data: data as TError,
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers,
+    const error = new Error(`Request failed with status ${response.status}`) as Error & {
+      payload?: TError;
+      status?: number;
     };
-
+    error.payload = data as TError;
+    error.status = response.status;
     throw error;
   }
 
@@ -157,7 +97,5 @@ export const client = async <TData, TError = unknown, TVariables = unknown>(
     data: data as TData,
     status: response.status,
     statusText: response.statusText,
-  };
-};
-
-export default client;
+  } as ResponseConfig<TData> & { __errorType?: TError };
+}

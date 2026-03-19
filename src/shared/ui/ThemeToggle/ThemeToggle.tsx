@@ -1,52 +1,28 @@
-﻿"use client";
+"use client";
 
-import { useSyncExternalStore } from "react";
 import { ActionIcon, useComputedColorScheme, useMantineColorScheme } from "@mantine/core";
-import { IconMoonStars, IconSunHigh } from "@tabler/icons-react";
-import styles from "./ThemeToggle.module.css";
+import { useMounted } from "@mantine/hooks";
+import { IconMoon, IconSun } from "@tabler/icons-react";
 
-type ThemeToggleProps = {
-  lightLabel: string;
-  darkLabel: string;
-};
-
-const emptySubscribe = () => () => {};
-
-const ThemeToggle = ({ lightLabel, darkLabel }: ThemeToggleProps) => {
-  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+export default function ThemeToggle() {
   const { setColorScheme } = useMantineColorScheme();
-  const colorScheme = useComputedColorScheme("light", { getInitialValueInEffect: true });
-  const isDark = colorScheme === "dark";
-
-  if (!mounted) {
-    return (
-      <ActionIcon
-        className={styles.root}
-        variant="subtle"
-        color="brandPrimary"
-        aria-label={darkLabel}
-        disabled
-      >
-        <IconMoonStars size={18} />
-      </ActionIcon>
-    );
-  }
+  const mounted = useMounted();
+  const currentScheme = useComputedColorScheme("light", {
+    getInitialValueInEffect: true,
+  });
+  const isDark = mounted && currentScheme === "dark";
 
   return (
     <ActionIcon
-      className={`${styles.root} ${isDark ? styles.dark : styles.light}`}
-      variant="gradient"
-      gradient={isDark ? { from: "brandSecondaryB.6", to: "brandPrimary.6", deg: 120 } : { from: "brandSecondaryA.5", to: "brandPrimary.5", deg: 120 }}
-      aria-label={isDark ? lightLabel : darkLabel}
+      variant="light"
+      color={isDark ? "yellow" : "indigo"}
+      size="lg"
+      radius="xl"
       onClick={() => setColorScheme(isDark ? "light" : "dark")}
+      aria-label="Toggle color scheme"
+      title="Toggle color scheme"
     >
-      {isDark ? (
-        <IconSunHigh size={18} className={styles.icon} />
-      ) : (
-        <IconMoonStars size={18} className={styles.icon} />
-      )}
+      {isDark ? <IconSun size={16} /> : <IconMoon size={16} />}
     </ActionIcon>
   );
-};
-
-export default ThemeToggle;
+}

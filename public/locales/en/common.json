@@ -1,1 +1,4 @@
-{"wip":"Work in progress"}
+{
+  "appName": "Next App Template",
+  "subtitle": "Starter with Mantine, i18n and typed API"
+}

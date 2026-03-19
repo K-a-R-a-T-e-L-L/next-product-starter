@@ -1,19 +1,12 @@
-﻿import { ReactNode } from "react";
-import { AppShellMain, Container, Stack } from "@mantine/core";
-import AppBreadcrumbs from "../../navigations/AppBreadcrumbs/AppBreadcrumbs";
-import styles from './Main.module.css'
+﻿import { AppShellMain, Container } from "@mantine/core";
+import type { ReactNode } from "react";
 
-const Main = ({ children }: { children: ReactNode }) => {
+export default function Main({ children }: { children: ReactNode }) {
   return (
-    <AppShellMain pos="relative" className={styles.main}>
-      <Container size="xl" py="xl">
-        <Stack m={0} p={0} gap="xl" w="100%">
-          <AppBreadcrumbs />
-          {children}
-        </Stack>
+    <AppShellMain>
+      <Container size="xl" py={32}>
+        {children}
       </Container>
     </AppShellMain>
   );
-};
-
-export default Main;
+}

@@ -1,22 +1,8 @@
 {
-  "brand": "My UI",
-  "description": "A platform to publish and discover UI templates.",
-  "cta": "Open Telegram",
-  "rights": "All rights reserved",
-  "navigation": {
-    "title": "Navigation",
-    "home": "Home",
-    "templates": "Templates",
-    "offers": "Offers",
-    "profile": "Profile"
-  },
-  "resources": {
-    "title": "Resources",
-    "faq": "FAQ",
-    "sitemap": "Sitemap"
-  },
-  "legal": {
-    "privacy": "Privacy policy",
-    "terms": "Terms of use"
-  }
+  "description": "Scalable frontend template for rapid product delivery.",
+  "copyright": "(c) Next App Template",
+  "faq": "FAQ",
+  "sitemap": "Sitemap",
+  "privacy": "Privacy Policy",
+  "terms": "Terms of Use"
 }

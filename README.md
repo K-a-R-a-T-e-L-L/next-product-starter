@@ -1,36 +1,251 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Next International Starter
 
-## Getting Started
+<details open>
+<summary><strong>English</strong></summary>
 
-First, run the development server:
+Production-ready Next.js template with Mantine UI, next-intl localization, React Query, and OpenAPI code generation via Kubb.
+
+## Why This Template
+
+This repository is a cleaned template extracted from a real project and prepared for reuse:
+
+- Next.js 16 App Router foundation
+- FSD-like layering: `app`, `processes`, `widgets`, `shared`
+- Localized routes (`/en`, `/ru`) with `next-intl`
+- Mantine-based layout and theming out of the box
+- Typed API layer and hooks generated from OpenAPI
+- Ready starter pages: Home, About, Docs
+
+## Tech Stack
+
+Core:
+
+- [Next.js 16](https://nextjs.org/) (App Router)
+- [React 19](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+
+UI:
+
+- [Mantine](https://mantine.dev/)
+- [Tabler Icons](https://tabler-icons.io/)
+
+Localization:
+
+- [next-intl](https://next-intl.dev/)
+
+Data and API:
+
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Kubb](https://kubb.dev/) (`@kubb/core`, `@kubb/plugin-*`)
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy `.env.example` to `.env` and update values.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+Variables:
 
-To learn more about Next.js, take a look at the following resources:
+- `NEXT_PUBLIC_SITE_URL`: public site URL
+- `NEXT_PUBLIC_API_URL`: runtime API base URL
+- `API_DOCS_URL`: remote OpenAPI endpoint (used when `OPENAPI_PATH=remote`)
+- `OPENAPI_PATH`: OpenAPI source for generation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`OPENAPI_PATH` options:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `./openapi.json` (default local schema)
+- `remote` (load schema from `API_DOCS_URL`)
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev`: start local development server
+- `npm run build`: production build
+- `npm run start`: start production server
+- `npm run lint`: run ESLint
+- `npm run generate`: run Kubb generation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Quick Start
+
+1. Install dependencies
+2. Configure `.env`
+3. Run `npm run generate`
+4. Run `npm run dev`
+5. Open `http://localhost:3000`
+
+## Architecture
+
+Main layers:
+
+- `src/app`: routing, locale layouts, metadata routes
+- `src/processes`: app-level providers
+- `src/widgets`: page views and layout widgets
+- `src/shared`: shared infrastructure (api, i18n, theme)
+
+Current routes:
+
+- `/` -> redirect to default locale
+- `/{locale}` -> Home
+- `/{locale}/about` -> About
+- `/{locale}/docs` -> Docs
+
+## i18n
+
+Config files:
+
+- `src/shared/lib/i18n/routing.ts`
+- `src/shared/lib/i18n/navigation.ts`
+- `src/shared/lib/i18n/request.ts`
+
+Translations:
+
+- `public/locales/en/*.json`
+- `public/locales/ru/*.json`
+
+## API Layer
+
+HTTP client:
+
+- `src/shared/api/client.ts`
+
+Generated output:
+
+- `src/shared/api/generated`
+
+Kubb config:
+
+- `kubb.config.ts`
+
+</details>
+
+<details>
+<summary><strong>Русский</strong></summary>
+
+Подробный стартовый шаблон Next.js с Mantine UI, локализацией через next-intl, React Query и генерацией OpenAPI-клиента через Kubb.
+
+## Зачем этот шаблон
+
+Этот репозиторий — очищенный шаблон, выделенный из реального проекта и подготовленный для повторного использования:
+
+- фундамент на Next.js 16 App Router
+- FSD-подобное деление: `app`, `processes`, `widgets`, `shared`
+- локализованные маршруты (`/en`, `/ru`) через `next-intl`
+- готовый базовый макет и тема на Mantine
+- типизированный API слой и хуки из OpenAPI
+- стартовые страницы: Home, About, Docs
+
+## Технологии
+
+Базовые:
+
+- [Next.js 16](https://nextjs.org/) (App Router)
+- [React 19](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+
+UI:
+
+- [Mantine](https://mantine.dev/)
+- [Tabler Icons](https://tabler-icons.io/)
+
+Локализация:
+
+- [next-intl](https://next-intl.dev/)
+
+Data и API:
+
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Kubb](https://kubb.dev/) (`@kubb/core`, `@kubb/plugin-*`)
+
+## Установка
+
+```bash
+npm install
+```
+
+## Переменные окружения
+
+Скопируй `.env.example` в `.env` и обнови значения.
+
+```bash
+cp .env.example .env
+```
+
+Переменные:
+
+- `NEXT_PUBLIC_SITE_URL`: публичный URL сайта
+- `NEXT_PUBLIC_API_URL`: базовый URL API для runtime
+- `API_DOCS_URL`: удалённый OpenAPI endpoint (используется при `OPENAPI_PATH=remote`)
+- `OPENAPI_PATH`: источник OpenAPI для генерации
+
+Варианты `OPENAPI_PATH`:
+
+- `./openapi.json` (локальная схема по умолчанию)
+- `remote` (схема берётся из `API_DOCS_URL`)
+
+## Скрипты
+
+- `npm run dev`: запуск dev-сервера
+- `npm run build`: production-сборка
+- `npm run start`: запуск production-сервера
+- `npm run lint`: запуск ESLint
+- `npm run generate`: генерация Kubb
+
+## Быстрый старт
+
+1. Установи зависимости
+2. Настрой `.env`
+3. Запусти `npm run generate`
+4. Запусти `npm run dev`
+5. Открой `http://localhost:3000`
+
+## Архитектура
+
+Основные слои:
+
+- `src/app`: роутинг, locale layouts, metadata routes
+- `src/processes`: app-level providers
+- `src/widgets`: page views и layout-виджеты
+- `src/shared`: общая инфраструктура (api, i18n, theme)
+
+Текущие маршруты:
+
+- `/` -> редирект на locale по умолчанию
+- `/{locale}` -> Home
+- `/{locale}/about` -> About
+- `/{locale}/docs` -> Docs
+
+## i18n
+
+Конфиги:
+
+- `src/shared/lib/i18n/routing.ts`
+- `src/shared/lib/i18n/navigation.ts`
+- `src/shared/lib/i18n/request.ts`
+
+Переводы:
+
+- `public/locales/en/*.json`
+- `public/locales/ru/*.json`
+
+## API слой
+
+HTTP-клиент:
+
+- `src/shared/api/client.ts`
+
+Сгенерированные файлы:
+
+- `src/shared/api/generated`
+
+Конфиг генерации:
+
+- `kubb.config.ts`
+
+</details>

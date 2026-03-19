@@ -1,29 +1,24 @@
-/// <reference types="node" />
-
-import { defineConfig } from "@kubb/core";
+﻿import { defineConfig } from "@kubb/core";
 import { pluginClient } from "@kubb/plugin-client";
 import { pluginOas } from "@kubb/plugin-oas";
 import { pluginReactQuery } from "@kubb/plugin-react-query";
 import { pluginTs } from "@kubb/plugin-ts";
+import { configDotenv } from "dotenv";
 
-const openApiUrl =
-  process.env.KUBB_OPENAPI_URL ?? "http://localhost:4000/api-docs-json";
+configDotenv();
 
-const normalizeGeneratedName = (name: string) =>
-  name
-    .replace(/^authController/i, "")
-    .replace(/^appController/i, "")
-    .replace(/^AuthController/i, "")
-    .replace(/^AppController/i, "")
-    .replace(/^_+/, "");
+const apiDocs = process.env.API_DOCS_URL || "http://localhost:4000/api-docs-json";
+const cacheBustedApiDocs = `${apiDocs}?v=${Date.now()}`;
+const openApiPath = process.env.OPENAPI_PATH || "./openapi.json";
+const sourcePath = openApiPath === "remote" ? cacheBustedApiDocs : openApiPath;
 
 export default defineConfig({
   root: ".",
   input: {
-    path: openApiUrl,
+    path: sourcePath,
   },
   output: {
-    path: "./src/shared/api/generated",
+    path: "./src/shared/api/.generated",
     clean: true,
     extension: {
       ".ts": "",
@@ -41,14 +36,11 @@ export default defineConfig({
       operations: true,
       pathParamsType: "inline",
       dataReturnType: "data",
-      importPath: "../../../client",
-      transformers: {
-        name: normalizeGeneratedName,
-      },
+      importPath: "@/shared/api/client",
     }),
     pluginReactQuery({
       client: {
-        importPath: "../../../client",
+        importPath: "@/shared/api/client",
         dataReturnType: "data",
       },
       output: {
@@ -63,9 +55,6 @@ export default defineConfig({
       paramsType: "inline",
       pathParamsType: "inline",
       suspense: false,
-      transformers: {
-        name: normalizeGeneratedName,
-      },
     }),
   ],
 });

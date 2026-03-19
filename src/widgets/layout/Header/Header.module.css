@@ -1,93 +1,28 @@
-﻿.desktop_nav {
-  display: block;
+﻿.header {
+  border-bottom: 1px solid color-mix(in srgb, var(--mantine-color-default-border) 75%, transparent 25%);
+  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--mantine-color-body) 85%, transparent 15%);
 }
 
-.list_item {
+.brand {
   text-decoration: none;
-  font-size: 18px;
-  transition:
-    color 0.18s ease,
-    opacity 0.18s ease;
-  display: inline-flex;
-  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--mantine-color-text);
-  position: relative;
-  padding: 2px 0;
-
-  &:hover {
-    opacity: 0.78;
-  }
 }
 
-.list_item_active {
+.link {
+  text-decoration: none;
+  font-size: 0.95rem;
   color: var(--mantine-color-text);
-  font-weight: 600;
+  opacity: 0.86;
+  transition: opacity 0.15s ease;
+}
+
+.link:hover {
   opacity: 1;
 }
 
-.list_item_active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--mantine-color-brandPrimary-5),
-    var(--mantine-color-brandSecondaryB-5)
-  );
-}
-
-.profile_link {
-  display: inline-flex;
-  align-items: center;
-}
-
-.profile_inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.profile_text {
-  white-space: nowrap;
-  font-size: inherit;
-  line-height: inherit;
-  transform: translateY(1px);
-}
-
-.mobile_nav {
-  display: none;
-}
-
-.mobile_link {
-  text-decoration: none;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--mantine-color-text);
-  border-radius: 10px;
-  padding: 8px 10px;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease;
-}
-
-.mobile_link:hover {
-  background: color-mix(in srgb, var(--mantine-color-text) 6%, transparent 94%);
-}
-
-.mobile_link_active {
-  color: var(--mantine-color-brandSecondaryB-4);
-}
-
-@media (max-width: 62em) {
-  .desktop_nav {
-    display: none;
-  }
-
-  .mobile_nav {
-    display: block;
-  }
+.localeButton {
+  min-width: 44px;
 }
